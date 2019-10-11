@@ -47,6 +47,37 @@ class ConsoleController extends Controller
      */
     protected $allowAnonymous = ['api'];
 
+    /**
+     * @var array Determines the commands that endpoint can run.
+     * @access protected
+     */
+    protected $allowedCommands = [
+        'backup/db',
+        'cache/flush',
+        'cache/flush-all',
+        'cache/flush-schema',
+        'cache/index',
+        'clear-caches/all',
+        'clear-caches/asset',
+        'clear-caches/asset-indexing-data',
+        'clear-caches/compiled-templates',
+        'clear-caches/cp-resources',
+        'clear-caches/data',
+        'clear-caches/index',
+        'clear-caches/temp-files',
+        'clear-caches/template-caches',
+        'clear-caches/transform-indexes',
+        'gc/run',
+        'graphql/dump-schema',
+        'graphql/print-schema',
+        'resave/assets',
+        'resave/categories',
+        'resave/entries',
+        'resave/matrix-blocks',
+        'resave/tags',
+        'resave/users',
+    ];
+
     // Public Methods
     // =========================================================================
 
@@ -58,6 +89,9 @@ class ConsoleController extends Controller
      */
     public function actionApi()
     {
+        // TODO check the token for authentication
+        // TODO add a list of console commands that are available
+
         return $this->asErrorJson('could not run the console command');
     }
 }
