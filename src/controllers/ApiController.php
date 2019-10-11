@@ -34,9 +34,8 @@ use craft\web\Controller;
  * @package   HealthCheck
  * @since     1.0.0
  */
-class ConsoleController extends Controller
+class ApiController extends Controller
 {
-
     // Protected Properties
     // =========================================================================
 
@@ -45,7 +44,7 @@ class ConsoleController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['api'];
+    protected $allowAnonymous = ['index'];
 
     /**
      * @var array Determines the commands that endpoint can run.
@@ -87,7 +86,7 @@ class ConsoleController extends Controller
      *
      * @return mixed
      */
-    public function actionApi()
+    public function actionIndex()
     {
         // TODO check the token for authentication
         // TODO add a list of console commands that are available
