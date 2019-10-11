@@ -1,6 +1,6 @@
 {
     "name": "mccallister/console",
-    "description": "Adds an API to call console commands from outside of the application, great for Dockerized environments.",
+    "description": "Craft CMS plugin that adds an API to call console commands from outside of the application, great for Dockerized environments!",
     "type": "craft-plugin",
     "version": "1.0.0",
     "keywords": [
