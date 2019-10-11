@@ -1,0 +1,42 @@
+{
+    "name": "mccallister/console",
+    "description": "Adds an API to call console commands from outside of the application, great for Dockerized environments.",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "console",
+        "cli",
+        "commands",
+        "api"
+    ],
+    "support": {
+        "docs": "https://github.com/jasonmccallister/craft-console",
+        "issues": "https://github.com/jasonmccallister/craft-console/issues"
+    },
+    "license": "MIT",
+    "authors": [{
+        "name": "Jason McCallister",
+        "homepage": "https://mccallister.io",
+        "email": "themccallister@gmail.com"
+    }],
+    "require": {
+        "craftcms/cms": "^3.0.0-RC1"
+    },
+    "autoload": {
+        "psr-4": {
+            "mccallister\\console\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Console",
+        "handle": "console",
+        "hasCpSettings": false,
+        "hasCpSection": false,
+        "changelogUrl": "https://raw.githubusercontent.com/jasonmccallister/craft-console/master/CHANGELOG.md",
+        "class": "mccallister\\console\\Console"
+    }
+}
