@@ -6,7 +6,7 @@ use Craft;
 use craft\base\Plugin;
 use craft\web\UrlManager;
 use craft\events\RegisterUrlRulesEvent;
-
+use mccallister\console\services\Tokens;
 use yii\base\Event;
 
 /**
@@ -65,6 +65,10 @@ class Console extends Plugin
     {
         parent::init();
         self::$plugin = $this;
+
+        $this->setComponents([
+            'tokens' => Tokens::class,
+        ]);
 
         // Register our site routes
         Event::on(

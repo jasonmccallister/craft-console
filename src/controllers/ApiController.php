@@ -13,6 +13,9 @@ namespace mccallister\console\controllers;
 
 use Craft;
 use craft\web\Controller;
+use InvalidArgumentException;
+use mccallister\console\Console;
+use yii\web\BadRequestHttpException;
 
 /**
  * Default Controller
@@ -36,6 +39,8 @@ use craft\web\Controller;
  */
 class ApiController extends Controller
 {
+    public $enableCsrfValidation = false;
+
     // Protected Properties
     // =========================================================================
 
@@ -51,30 +56,30 @@ class ApiController extends Controller
      * @access protected
      */
     protected $allowedCommands = [
-        'backup/db',
-        'cache/flush',
-        'cache/flush-all',
-        'cache/flush-schema',
-        'cache/index',
-        'clear-caches/all',
-        'clear-caches/asset',
-        'clear-caches/asset-indexing-data',
-        'clear-caches/compiled-templates',
-        'clear-caches/cp-resources',
-        'clear-caches/data',
-        'clear-caches/index',
-        'clear-caches/temp-files',
-        'clear-caches/template-caches',
-        'clear-caches/transform-indexes',
-        'gc/run',
-        'graphql/dump-schema',
-        'graphql/print-schema',
-        'resave/assets',
-        'resave/categories',
-        'resave/entries',
-        'resave/matrix-blocks',
-        'resave/tags',
-        'resave/users',
+        // 'backup/db',
+        // 'cache/flush',
+        // 'cache/flush-all',
+        // 'cache/flush-schema',
+        // 'cache/index',
+        // 'clear-caches/all',
+        // 'clear-caches/asset',
+        // 'clear-caches/asset-indexing-data',
+        // 'clear-caches/compiled-templates',
+        // 'clear-caches/cp-resources',
+        // 'clear-caches/data',
+        // 'clear-caches/index',
+        // 'clear-caches/temp-files',
+        // 'clear-caches/template-caches',
+        // 'clear-caches/transform-indexes',
+        'gc/run' => 'theclass',
+        // 'graphql/dump-schema',
+        // 'graphql/print-schema',
+        // 'resave/assets',
+        // 'resave/categories',
+        // 'resave/entries',
+        // 'resave/matrix-blocks',
+        // 'resave/tags',
+        // 'resave/users',
     ];
 
     // Public Methods
@@ -88,9 +93,37 @@ class ApiController extends Controller
      */
     public function actionIndex()
     {
-        // TODO check the token for authentication
-        // TODO add a list of console commands that are available
+        $this->requirePostRequest();
+        $this->requireAcceptsJson();
+        $response = Craft::$app->getResponse();
+        $request = Craft::$app->getRequest();
+        $service = Console::getInstance()->tokens;
 
-        return $this->asErrorJson('could not run the console command');
+        // find the token from the authorization header
+        if (preg_match('/^Bearer\s+(.+)$/i', $request->headers->get('authorization'), $matches)) {
+            $token = $matches[1];
+            try {
+                $valid = $service->find($token);
+            } catch (InvalidArgumentException $e) {
+                $response->setStatusCode(400, 'Invalid authorization token.');
+
+                return $this->asErrorJson('Invalid authorization token.');
+            }
+        }
+
+        // verify the command is allowed, this should be permissions based on the token eventually
+        $command = $request->getRequiredBodyParam("command");
+        if (!array_key_exists($command, $this->allowedCommands)) {
+            $response->setStatusCode(400, 'Command is not authorized');
+
+            return $this->asErrorJson('Command is not authorized');
+        }
+
+        // call the command
+
+        // return the output of the command as the message, if an option
+        return $this->asJson([
+            'message' => 'ok',
+        ]);
     }
 }
