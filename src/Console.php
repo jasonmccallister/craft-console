@@ -4,8 +4,10 @@ namespace mccallister\console;
 
 use Craft;
 use craft\base\Plugin;
+use craft\events\RegisterCpNavItemsEvent;
 use craft\web\UrlManager;
 use craft\events\RegisterUrlRulesEvent;
+use craft\web\twig\variables\Cp;
 use mccallister\console\services\Tokens;
 use yii\base\Event;
 
@@ -26,6 +28,11 @@ use yii\base\Event;
  */
 class Console extends Plugin
 {
+    /**
+     * @var bool Whether the plugin has its own section in the CP
+     */
+    public $hasCpSection = true;
+
     // Static Properties
     // =========================================================================
 
@@ -66,9 +73,20 @@ class Console extends Plugin
         parent::init();
         self::$plugin = $this;
 
+        // setup our services
         $this->setComponents([
             'tokens' => Tokens::class,
         ]);
+
+        // Register cp routes
+        Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_CP_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $event->rules['console/tokens'] = 'console/tokens';
+                $event->rules['console/tokens/new'] = 'console/tokens/edit';
+            }
+        );
 
         // Register our site routes
         Event::on(
@@ -76,6 +94,19 @@ class Console extends Plugin
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
                 $event->rules['console/api'] = 'console/api';
+            }
+        );
+
+        // Register the sidebar icons
+        Event::on(
+            Cp::class,
+            Cp::EVENT_REGISTER_CP_NAV_ITEMS,
+            function(RegisterCpNavItemsEvent $event) {
+                $event->navItems[] = [
+                    'url' => 'console',
+                    'label' => 'Console',
+                    'icon' => '@mccallister/console/icon-mask.svg',
+                ];
             }
         );
 

@@ -105,18 +105,18 @@ class ApiController extends Controller
             try {
                 $valid = $service->find($token);
             } catch (InvalidArgumentException $e) {
-                $response->setStatusCode(400, 'Invalid authorization token.');
+                $response->setStatusCode(400, 'Invalid console authorization token.');
 
-                return $this->asErrorJson('Invalid authorization token.');
+                return $this->asErrorJson('Invalid console authorization token.');
             }
         }
 
         // verify the command is allowed, this should be permissions based on the token eventually
         $command = $request->getRequiredBodyParam("command");
         if (!array_key_exists($command, $this->allowedCommands)) {
-            $response->setStatusCode(400, 'Command is not authorized');
+            $response->setStatusCode(400, 'Console command is not authorized');
 
-            return $this->asErrorJson('Command is not authorized');
+            return $this->asErrorJson('Console command is not authorized');
         }
 
         // call the command

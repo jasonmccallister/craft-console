@@ -1,0 +1,48 @@
+{% extends "_layouts/cp" %}
+{% set title = "Console Tokens"|t('app') %}
+
+{% macro timestampCell(title, value) %}
+    {% if value %}
+        <td data-title="{{ title }}" title="{{ value|datetime('short') }}">{{ value|timestamp }}</td>
+    {% else %}
+        <td class="light" data-title="{{ title }}">{{ 'Never'|t('app') }}</td>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    <table id="tokens" class="data fullwidth collapsible">
+        <thead>
+            <th scope="col">{{ "Token name"|t('app') }}</th>
+            <th scope="col">{{ "Enabled"|t('app') }}</th>
+            <th scope="col">{{ "Last Used"|t('app') }}</th>
+            <th scope="col">{{ "Expires"|t('app') }}</th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for token in tokens %}
+                <tr data-id="{{ token.id }}" data-name="{{ token.name }}">
+                    <th scope="row" data-title="{{ 'Name'|t('app') }}"><a href="{{ url('console/tokens/' ~ token.id) }}">{{ token.name }}</a></th>
+                    <td data-title="{{ 'Enabled'|t('app') }}">{% if token.enabled %}<div data-icon="check"></div>{% endif %}</td>
+                    {{ _self.timestampCell('Last Used'|t('app'), token.lastUsed) }}
+                    {{ _self.timestampCell('Expires'|t('app'), token.expiryDate) }}
+                    <th class="thin">
+                        <a class="delete icon" title="{{ 'Delete'|t('app') }}" role="button"></a>
+                    </th>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="buttons">
+        <a class="btn submit add icon" href="{{ url('console/tokens/new') }}">{{ "New token"|t('app') }}</a>
+    </div>
+{% endblock %}
+
+
+{% js on ready %}
+    new Craft.AdminTable({
+        tableSelector: '#token',
+        sortable: false,
+        deleteAction: 'console/delete-token'
+    });
+{% endjs %}
