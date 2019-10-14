@@ -2,9 +2,9 @@
 
 namespace mccallister\console\controllers;
 
-use Craft;
-use craft\web\Controller;
 use yii\web\Response;
+use craft\web\Controller;
+use mccallister\console\models\Token;
 
 class TokensController extends Controller
 {
@@ -16,23 +16,11 @@ class TokensController extends Controller
     {
         $this->requireAdmin(true);
 
-        // hardcode the tokens
-        $tokens = [
-            [
-                'id' => 'dddddd',
-                'name' => 'Example Token',
-                'enabled' => true,
-                'lastUsed' => null,
-                'expiryDate' => null,
-            ],
-            [
-                'id' => 'dddddd',
-                'name' => 'Another Token',
-                'enabled' => false,
-                'lastUsed' => null,
-                'expiryDate' => null,
-            ]
-        ];
+        $token = new Token();
+        $token->name = 'testing';
+        $token->accessToken = '32rffds';
+
+        $tokens = [$token];
 
         return $this->renderTemplate('console/tokens/_index', [
             'tokens' => $tokens,
@@ -47,13 +35,13 @@ class TokensController extends Controller
     {
         $this->requireAdmin(true);
 
+        $token = new Token();
+        $token->name = "this";
+        $token->accessToken = "12356768";
+
         return $this->renderTemplate('console/tokens/_edit', [
             'title' => 'Create a new console token',
-            'token' => [
-                'id' => 'ddddd',
-                'uid' => 'ddddd',
-                'name' => 'ddddd',
-            ],
+            'token' => $token,
         ]);
     }
 }
