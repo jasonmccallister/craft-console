@@ -106,20 +106,29 @@ class ApiController extends Controller
             return $this->asErrorJson('Console command is not authorized');
         }
 
-        // call the command
         try {
+            // definitely not ideal
+            if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
+            if (!defined('STDIN')) define('STDIN', fopen('php://stdin', 'wb'));
+            if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
+
             Console::$plugin->getInstance()->controllerNamespace = 'craft\console\controllers';
 
-            $command = Console::$plugin->getInstance()->runAction('resave/assets');
-        } catch(Exception $e) {
+            $completed = (bool) Console::$plugin->getInstance()->runAction($command);
+        } catch (Exception $e) {
             $response->setStatusCode(400, $e->getMessage());
 
             return $this->asErrorJson($e->getMessage());
         }
 
-        // return the output of the command as the message, if an option
+        if ($completed) {
+            $response->setStatusCode(400, 'console command could not be run.');
+
+            return $this->asErrorJson('console command could not be run.');
+        }
+
         return $this->asJson([
-            'message' => 'ok',
+            'message' => $completed,
         ]);
     }
 }
