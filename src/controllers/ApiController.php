@@ -109,10 +109,8 @@ class ApiController extends Controller
         // call the command
         try {
             Console::$plugin->getInstance()->controllerNamespace = 'craft\console\controllers';
-            // Craft::dd(Console::$plugin->getInstance()->controllerNamespace);
-            $controller = Craft::$app->createController('backup');
-            Craft::dd($controller);
-            $command = Craft::$app->runAction('clear-caches');
+
+            $command = Console::$plugin->getInstance()->runAction('resave/assets');
         } catch(Exception $e) {
             $response->setStatusCode(400, $e->getMessage());
 
