@@ -3,9 +3,26 @@
 namespace mccallister\console\services;
 
 use craft\base\Component;
+use InvalidArgumentException;
 
 class Commands extends Component
 {
+    /**
+     * The commands that are available for the console plugin.
+     *
+     * @var array
+     */
+    protected $commands = [
+        'backup/db' => [
+            'description' => 'Creates a new database backup.',
+            'namespace' => 'craft\console\controllers',
+        ],
+        'cache/flush-all' => [
+            'description' => 'Flushes all caches registered in the system.',
+            'namespace' => '',
+        ],
+    ];
+
     /**
      * Gets all of the commands that console allows to run.
      *
@@ -13,32 +30,21 @@ class Commands extends Component
      */
     public function all(): array
     {
-        return [
-            'backup/db' => 'Creates a new database backup',
-            'cache/flush-all' => 'Flushes all caches registered in the system.',
-            // 'cache/flush-schema',
-            // 'cache/index',
-            // 'clear-caches/all',
-            // 'clear-caches/asset',
-            // 'clear-caches/asset-indexing-data',
-            // 'clear-caches/compiled-templates',
-            // 'clear-caches/cp-resources',
-            // 'clear-caches/data',
-            // 'clear-caches/index',
-            // 'clear-caches/temp-files',
-            // 'clear-caches/template-caches',
-            // 'clear-caches/transform-indexes',
-            // 'gc/run' => 'theclass',
-            // //
-            // 'graphql/dump-schema',
-            // 'graphql/print-schema',
-            // // resave commands
-            // 'resave/assets',
-            // 'resave/categories',
-            // 'resave/entries' => 'theclass',
-            // 'resave/matrix-blocks',
-            // 'resave/tags',
-            // 'resave/users',
-        ];
+       return $this->commands;
+    }
+
+    /**
+     * Get a command by its name.
+     *
+     * @throws InvalidArgumentException
+     * @return array
+     */
+    public function get(string $name): array
+    {
+        if (!array_key_exists($name, $this->commands)) {
+            throw new InvalidArgumentException('The command with the name ' . $name . ' is not allowed.');
+        }
+
+       return $this->commands[$name];
     }
 }

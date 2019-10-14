@@ -69,12 +69,15 @@ class ApiController extends Controller
 
         // verify the command is allowed, this should be permissions based on the token eventually
         $allowedCommands = Console::$plugin->getInstance()->commands->all();
-        $command = $request->getRequiredBodyParam('command');
-        if (!array_key_exists($command, $allowedCommands)) {
+        $commandParam = $request->getRequiredBodyParam('command');
+        if (!array_key_exists($commandParam, $allowedCommands)) {
             $response->setStatusCode(400, 'Console command is not authorized');
 
             return $this->asErrorJson('Console command is not authorized');
         }
+
+        $command = Console::$plugin->getInstance()->commands->get($commandParam);
+        Craft::dd($command['namespace']);
 
         try {
             // definitely not ideal
