@@ -68,6 +68,7 @@ class Console extends Plugin
         // setup our services
         $this->setComponents([
             'tokens' => Tokens::class,
+            'commands' => Commands::class,
         ]);
 
         // Register cp routes
@@ -94,7 +95,7 @@ class Console extends Plugin
             $variable = $e->sender;
 
             // Attach a service:
-            $variable->set('console.commands', Commands::class);
+            $variable->set('commands', Commands::class);
         });
 
         // Register the sidebar icons

@@ -39,37 +39,6 @@ class ApiController extends Controller
      */
     protected $allowAnonymous = ['index'];
 
-    /**
-     * @var    array Determines the commands that endpoint can run.
-     * @access protected
-     */
-    protected $allowedCommands = [
-        // 'backup/db',
-        // 'cache/flush',
-        // 'cache/flush-all',
-        // 'cache/flush-schema',
-        // 'cache/index',
-        // 'clear-caches/all',
-        // 'clear-caches/asset',
-        // 'clear-caches/asset-indexing-data',
-        // 'clear-caches/compiled-templates',
-        // 'clear-caches/cp-resources',
-        // 'clear-caches/data',
-        // 'clear-caches/index',
-        // 'clear-caches/temp-files',
-        // 'clear-caches/template-caches',
-        // 'clear-caches/transform-indexes',
-        'gc/run' => 'theclass',
-        // 'graphql/dump-schema',
-        // 'graphql/print-schema',
-        // 'resave/assets',
-        // 'resave/categories',
-        'resave/entries' => 'theclass',
-        // 'resave/matrix-blocks',
-        // 'resave/tags',
-        // 'resave/users',
-    ];
-
     // Public Methods
     // =========================================================================
 
@@ -99,8 +68,9 @@ class ApiController extends Controller
         }
 
         // verify the command is allowed, this should be permissions based on the token eventually
+        $allowedCommands = Console::$plugin->getInstance()->commands->all();
         $command = $request->getRequiredBodyParam('command');
-        if (!array_key_exists($command, $this->allowedCommands)) {
+        if (!array_key_exists($command, $allowedCommands)) {
             $response->setStatusCode(400, 'Console command is not authorized');
 
             return $this->asErrorJson('Console command is not authorized');
@@ -114,21 +84,21 @@ class ApiController extends Controller
 
             Console::$plugin->getInstance()->controllerNamespace = 'craft\console\controllers';
 
-            $completed = (bool) Console::$plugin->getInstance()->runAction($command);
+            $exitCode = Console::$plugin->getInstance()->runAction($command);
         } catch (Exception $e) {
             $response->setStatusCode(400, $e->getMessage());
 
             return $this->asErrorJson($e->getMessage());
         }
 
-        if ($completed) {
+        if ($exitCode !== 0) {
             $response->setStatusCode(400, 'console command could not be run.');
 
             return $this->asErrorJson('console command could not be run.');
         }
 
         return $this->asJson([
-            'message' => $completed,
+            'message' => 'ok',
         ]);
     }
 }
