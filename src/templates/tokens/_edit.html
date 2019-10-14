@@ -38,7 +38,7 @@
                 {% endif %}
 
                 {% if props.nested ?? false %}
-                    {{ permissionList(schema, props.nested, permissionName~'-nested', not checked) }}
+                    {{ permissionList(token, props.nested, permissionName~'-nested', not checked) }}
                 {% endif %}
             </li>
         {% endfor %}
@@ -48,15 +48,15 @@
 {% from _self import permissionList %}
 
 {% block content %}
-    <input type="hidden" name="action" value="graphql/save-schema">
-    {{ redirectInput('graphql/schemas') }}
-    {% if token.id %}<input type="hidden" name="schemaId" value="{{ token.id }}">{% endif %}
+    <input type="hidden" name="action" value="console/save-token">
+    {{ redirectInput('console/tokens') }}
+    {% if token.id %}<input type="hidden" name="tokenId" value="{{ token.id }}">{% endif %}
 
-    <div id="schema-settings">
+    <div id="token-settings">
             {{ forms.textField({
                 first: true,
                 label: "Name"|t('app'),
-                instructions: "What this schema will be called in the CP."|t('app'),
+                instructions: "What this token will be called in the CP."|t('app'),
                 id: 'name',
                 name: 'name',
                 value: token.name,
@@ -67,7 +67,7 @@
 
             {% embed '_includes/forms/field' with {
                 label: "Access Token"|t('app'),
-                instructions: 'The token that must be provided with GraphQL requests to access this token.'|t('app'),
+                instructions: 'The token that must be provided with API requests to access this token.'|t('app'),
                 id: 'accessToken',
             } %}
                 {% block input %}
@@ -111,7 +111,7 @@
 
         <hr>
 
-        <h2>{{ 'Define the schema’s scope'|t('app') }}</h2>
+        <h2>{{ 'Define the token’s scope'|t('app') }}</h2>
 
         {% do view.registerTranslations('app', [
             "Select All",
@@ -127,7 +127,7 @@
             <h3>{{ category }}</h3>
             <div class="select-all"></div>
 
-            {{ permissionList(schema, catPermissions) }}
+            {{ permissionList(token, catPermissions) }}
         </div>
         {% endfor %}
     </div>
@@ -138,7 +138,7 @@
         $('#show-btn').on('click', function() {
             Craft.elevatedSessionManager.requireElevatedSession(function() {
                 $('#token-spinner').removeClass('hidden');
-                var data = {{ {schemaUid: token.uid}|json_encode|raw }};
+                var data = {{ {tokenUid: token.uid}|json_encode|raw }};
                 Craft.postActionRequest('graphql/fetch-token', data, function(response, textStatus) {
                     $('#token-spinner').addClass('hidden');
                     if (textStatus === 'success') {
