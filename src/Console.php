@@ -8,6 +8,8 @@ use craft\events\RegisterCpNavItemsEvent;
 use craft\web\UrlManager;
 use craft\events\RegisterUrlRulesEvent;
 use craft\web\twig\variables\Cp;
+use craft\web\twig\variables\CraftVariable;
+use mccallister\console\services\Commands;
 use mccallister\console\services\Tokens;
 use yii\base\Event;
 
@@ -86,6 +88,14 @@ class Console extends Plugin
                 $event->rules['console/api'] = 'console/api';
             }
         );
+
+        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $e) {
+            /** @var CraftVariable $variable */
+            $variable = $e->sender;
+
+            // Attach a service:
+            $variable->set('console.commands', Commands::class);
+        });
 
         // Register the sidebar icons
         Event::on(
