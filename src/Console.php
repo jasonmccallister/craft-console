@@ -9,9 +9,12 @@ use craft\web\UrlManager;
 use craft\events\RegisterUrlRulesEvent;
 use craft\web\twig\variables\Cp;
 use craft\web\twig\variables\CraftVariable;
+use mccallister\console\records\Job;
 use mccallister\console\services\Commands;
 use mccallister\console\services\Tokens;
 use yii\base\Event;
+use yii\queue\PushEvent;
+use yii\queue\Queue;
 
 /**
  * @author    Jason McCallister
@@ -89,6 +92,28 @@ class Console extends Plugin
                 $event->rules['console/api'] = 'console/api';
             }
         );
+
+        // list to the queue
+        Event::on(Queue::class, Queue::EVENT_AFTER_PUSH, function(PushEvent $event) {
+            $queuedJob = $event->job;
+            $job = new Job();
+            $job->delay = $queuedJob->delay ?? 0;
+            $job->priority = $queuedJob->priority ?? null;
+            $job->class = get_class($queuedJob);
+            $job->elementType = $queuedJob->elementType ?? null;
+            $job->elementId = $queuedJob->elementId;
+            $job->siteId = $queuedJob->siteId ?? 0;
+            $job->description = $queuedJob->description ?? null;
+            $job->progress = 0;
+            $job->progressLabel = null;
+            $job->event = json_encode($event);
+            $job->payload = json_encode($event->job);
+            $job->save();
+        });
+
+        Event::on(Queue::class, Queue::EVENT_BEFORE_EXEC, function(PushEvent $event) {
+            // Craft::dd($event);
+        });
 
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $e) {
             /** @var CraftVariable $variable */

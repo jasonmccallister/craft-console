@@ -29,12 +29,31 @@ class Install extends Migration
             'uid' => $this->uid(),
         ]);
 
+        $this->createTable('{{%console_jobs}}', [
+            'id' => $this->primaryKey(),
+            'delay' => $this->bigInteger(),
+            'priority' => $this->string(),
+            'class' => $this->string()->notNull(),
+            'elementType' => $this->string(),
+            'elementId' => $this->bigInteger(),
+            'siteId' => $this->bigInteger(),
+            'description' => $this->string(),
+            'progress' => $this->boolean(),
+            'progressLabel' => $this->string(),
+            'event' => $this->json(),
+            'payload' => $this->json(),
+            'dateCreated' => $this->dateTime()->notNull(),
+            'dateUpdated' => $this->dateTime()->notNull(),
+            'uid' => $this->uid(),
+        ]);
+
         return true;
     }
 
     public function safeDown()
     {
         $this->dropTable('{{%console_tokens}}');
+        $this->dropTable('{{%console_jobs}}');
 
         return true;
     }
