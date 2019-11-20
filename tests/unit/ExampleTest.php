@@ -20,6 +20,7 @@ class ExampleTest extends Unit
 
         $this->assertSame(
             Craft::Pro,
-            Craft::$app->getEdition());
+            Craft::$app->getEdition()
+        );
     }
 }
