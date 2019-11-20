@@ -4,8 +4,8 @@ services:
     image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: homestead
-      MYSQL_USER: homestead
+      MYSQL_DATABASE: test_craftcms
+      MYSQL_USER: console_test
       MYSQL_PASSWORD: secret
     ports:
       - 33060:3306
