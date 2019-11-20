@@ -90,30 +90,10 @@ class Console extends Plugin
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
                 $event->rules['console/api'] = 'console/api';
+                $event->rules['console/assets'] = 'console/assets';
+                $event->rules['console/assets/<id>'] = 'console/assets/show';
             }
         );
-
-        // list to the queue
-        Event::on(Queue::class, Queue::EVENT_AFTER_PUSH, function(PushEvent $event) {
-            $queuedJob = $event->job;
-            $job = new Job();
-            $job->delay = $queuedJob->delay ?? 0;
-            $job->priority = $queuedJob->priority ?? null;
-            $job->class = get_class($queuedJob);
-            $job->elementType = $queuedJob->elementType ?? null;
-            $job->elementId = $queuedJob->elementId;
-            $job->siteId = $queuedJob->siteId ?? 0;
-            $job->description = $queuedJob->description ?? null;
-            $job->progress = 0;
-            $job->progressLabel = null;
-            $job->event = json_encode($event);
-            $job->payload = json_encode($event->job);
-            $job->save();
-        });
-
-        Event::on(Queue::class, Queue::EVENT_BEFORE_EXEC, function(PushEvent $event) {
-            // Craft::dd($event);
-        });
 
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $e) {
             /** @var CraftVariable $variable */

@@ -47,6 +47,16 @@ class Install extends Migration
             'uid' => $this->uid(),
         ]);
 
+        $this->createTable('{{%console_asset_events}}', [
+            'id' => $this->primaryKey(),
+            'assetId' => $this->bigInteger(),
+            'isNew' => $this->boolean(),
+            'userId' => $this->bigInteger()->null(),
+            'dateCreated' => $this->dateTime()->notNull(),
+            'dateUpdated' => $this->dateTime()->notNull(),
+            'uid' => $this->uid(),
+        ]);
+
         return true;
     }
 
@@ -54,6 +64,7 @@ class Install extends Migration
     {
         $this->dropTable('{{%console_tokens}}');
         $this->dropTable('{{%console_jobs}}');
+        $this->dropTable('{{%console_asset_events}}');
 
         return true;
     }
